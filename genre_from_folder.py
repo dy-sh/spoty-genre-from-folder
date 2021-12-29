@@ -1,22 +1,5 @@
-from spoty.commands.first_list_commands import \
-    count_command, \
-    delete_command, \
-    export_command, \
-    import_deezer_command, \
-    import_spotify_command, \
-    print_command, \
-    find_duplicates_command
-from spoty.commands import \
-    filter_group, \
-    get_second_group
-from spoty.commands import get_group
 from spoty.utils import SpotyContext
 import spoty.audio_files
-import spoty.spotify_api
-import spoty.deezer_api
-import spoty.audio_files
-import spoty.csv_playlist
-import spoty.utils
 import click
 from pathlib import Path
 
@@ -91,9 +74,7 @@ Edit the plugin code to change the genre and mood list.
               help='Get audio files located at the specified local path. You can specify the audio file name as well.')
 @click.option('--no-recursive', '-r', is_flag=True,
               help='Do not search in subdirectories from the specified path.')
-@click.pass_context
 def write(
-        ctx,
         audio,
         no_recursive
 ):
@@ -133,7 +114,7 @@ Update Genre and Mood tag in audio files from parent folder name.
     # genre
 
     replace_list = []
-    for tags in tags_list:
+    for tags in all_tags_list:
         file_name = tags['SPOTY_FILE_NAME']
         genre = get_genre(file_name)
         if genre is None:
@@ -141,7 +122,6 @@ Update Genre and Mood tag in audio files from parent folder name.
             exit()
         if 'GENRE' not in tags or ('GENRE' in tags and genre != tags['GENRE']):
             replace_list.append(tags)
-
 
     if len(replace_list) > 0:
         click.echo()
@@ -162,13 +142,12 @@ Update Genre and Mood tag in audio files from parent folder name.
     # mood
 
     replace_list = []
-    for tags in tags_list:
+    for tags in all_tags_list:
         file_name = tags['SPOTY_FILE_NAME']
         mood = get_mood(file_name)
         if mood is not None:
             if 'MOOD' not in tags or ('MOOD' in tags and mood != tags['MOOD']):
                 replace_list.append(tags)
-
 
     if len(replace_list) > 0:
         click.echo()
